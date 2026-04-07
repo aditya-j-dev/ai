@@ -1,1 +1,952 @@
+#1
+#include <bits/stdc++.h>
+using namespace std;
 
+/*
+BFS Traversal with user-friendly input prompts
+*/
+
+class Solution {
+public:
+    vector<int> bfs(int V, vector<vector<int>> &adj) {
+
+        vector<int> result;
+        vector<int> visited(V, 0);
+        queue<int> q;
+
+        for(int i = 0; i < V; i++) {
+            if(!visited[i]) {
+
+                q.push(i);
+                visited[i] = 1;
+
+                while(!q.empty()) {
+                    int node = q.front();
+                    q.pop();
+
+                    result.push_back(node);
+
+                    for(auto neighbor : adj[node]) {
+                        if(!visited[neighbor]) {
+                            visited[neighbor] = 1;
+                            q.push(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+};
+
+int main() {
+    int V, E;
+
+    cout << "Enter number of vertices and edges: ";
+    cin >> V >> E;
+
+    vector<vector<int>> adj(V);
+
+    cout << "Enter edges (u v):\n";
+    cout << "(Each line represents an undirected edge)\n";
+
+    for(int i = 0; i < E; i++) {
+        int u, v;
+        cin >> u >> v;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    Solution obj;
+    vector<int> result = obj.bfs(V, adj);
+
+    cout << "\nBFS Traversal: ";
+    for(int node : result)
+        cout << node << " ";
+
+    return 0;
+}
+
+#2
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int V, E, S, D;
+
+    cout << "Enter number of vertices and edges: ";
+    cin >> V >> E;
+
+    cout << "Enter source and destination: ";
+    cin >> S >> D;
+
+    vector<vector<int>> adj(V);
+
+    cout << "Enter edges (u v):\n";
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        cin >> u >> v;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u); // undirected graph
+    }
+
+    // BFS setup
+    vector<int> dist(V, -1);     // distance array
+    vector<int> parent(V, -1);   // to reconstruct path
+    queue<int> q;
+
+    // start BFS from source
+    q.push(S);
+    dist[S] = 0;
+
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+
+        for (auto neighbor : adj[node]) {
+            if (dist[neighbor] == -1) {
+                dist[neighbor] = dist[node] + 1;
+                parent[neighbor] = node;
+                q.push(neighbor);
+            }
+        }
+    }
+
+    // check if destination is reachable
+    if (dist[D] == -1) {
+        cout << "\nNo path exists!\n";
+        return 0;
+    }
+
+    cout << "\nShortest Distance: " << dist[D] << endl;
+
+    // reconstruct path
+    vector<int> path;
+    int curr = D;
+
+    while (curr != -1) {
+        path.push_back(curr);
+        curr = parent[curr];
+    }
+
+    reverse(path.begin(), path.end());
+
+    cout << "Path: ";
+    for (int node : path)
+        cout << node << " ";
+
+    return 0;
+}
+
+#3
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+DFS Traversal of a graph
+Handles disconnected graphs also
+*/
+
+void dfs(int node, vector<vector<int>> &adj, vector<int> &visited, vector<int> &result) {
+    visited[node] = 1;
+    result.push_back(node);
+
+    for (auto neighbor : adj[node]) {
+        if (!visited[neighbor]) {
+            dfs(neighbor, adj, visited, result);
+        }
+    }
+}
+
+int main() {
+    int V, E;
+
+    cout << "Enter number of vertices and edges: ";
+    cin >> V >> E;
+
+    vector<vector<int>> adj(V);
+
+    cout << "Enter edges (u v):\n";
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        cin >> u >> v;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u); // undirected graph
+    }
+
+    // Optional: sort adjacency list for consistent output
+    for (int i = 0; i < V; i++) {
+        sort(adj[i].begin(), adj[i].end());
+    }
+
+    vector<int> visited(V, 0);
+    vector<int> result;
+
+    // Important: handles disconnected graphs
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            dfs(i, adj, visited, result);
+        }
+    }
+
+    cout << "\nDFS Traversal: ";
+    for (int node : result) {
+        cout << node << " ";
+    }
+
+    return 0;
+}
+
+#4
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+Problem:
+Campus buildings: A, B, C, D, E, F
+Edges:
+A->B, A->C, B->D, B->E, C->F
+
+Tasks:
+1. Perform DFS from A
+2. Show traversal order
+3. Explain why DFS is suitable
+*/
+
+// DFS function
+void dfs(int node, vector<vector<int>>& adj, vector<int>& visited, vector<int>& result) {
+    visited[node] = 1;
+    result.push_back(node);
+
+    for (auto neighbor : adj[node]) {
+        if (!visited[neighbor]) {
+            dfs(neighbor, adj, visited, result);
+        }
+    }
+}
+
+int main() {
+
+    int V = 6; // A, B, C, D, E, F
+
+    vector<vector<int>> adj(V);
+
+    // Constructing graph
+    adj[0].push_back(1); // A -> B
+    adj[0].push_back(2); // A -> C
+    adj[1].push_back(3); // B -> D
+    adj[1].push_back(4); // B -> E
+    adj[2].push_back(5); // C -> F
+
+    vector<int> visited(V, 0);
+    vector<int> result;
+
+    // Start DFS from A (node 0)
+    dfs(0, adj, visited, result);
+
+    // Task 2: Print traversal order
+    cout << "DFS Traversal Order: ";
+    for (int node : result) {
+        cout << char('A' + node) << " ";
+    }
+
+    return 0;
+}
+
+#5
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+TSP using Bitmask DP + Path Reconstruction
+*/
+
+const int INF = 1e9;
+
+int n;
+vector<vector<int>> dist;
+vector<vector<int>> dp;
+vector<vector<int>> parent; // to store next city
+
+int tsp(int mask, int pos) {
+
+    if (mask == (1 << n) - 1) {
+        return dist[pos][0];
+    }
+
+    if (dp[mask][pos] != -1) {
+        return dp[mask][pos];
+    }
+
+    int ans = INF;
+    int bestCity = -1;
+
+    for (int city = 0; city < n; city++) {
+
+        if ((mask & (1 << city)) == 0) {
+
+            int newCost = dist[pos][city] +
+                          tsp(mask | (1 << city), city);
+
+            if (newCost < ans) {
+                ans = newCost;
+                bestCity = city; // store best next city
+            }
+        }
+    }
+
+    parent[mask][pos] = bestCity;
+    return dp[mask][pos] = ans;
+}
+
+int main() {
+
+    cout << "Enter number of cities: ";
+    cin >> n;
+
+    dist.assign(n, vector<int>(n));
+
+    cout << "Enter cost matrix:\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> dist[i][j];
+        }
+    }
+
+    dp.assign(1 << n, vector<int>(n, -1));
+    parent.assign(1 << n, vector<int>(n, -1));
+
+    int minCost = tsp(1, 0);
+
+    cout << "\nMinimum Travelling Cost: " << minCost << endl;
+
+    // 🔹 Reconstruct path
+    vector<int> path;
+    int mask = 1, pos = 0;
+
+    path.push_back(0);
+
+    while (true) {
+        int next = parent[mask][pos];
+        if (next == -1) break;
+
+        path.push_back(next);
+        mask |= (1 << next);
+        pos = next;
+    }
+
+    path.push_back(0); // return to start
+
+    cout << "Path: ";
+    for (int city : path) {
+        cout << city << " ";
+    }
+
+    return 0;
+}
+
+#6
+#include <bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+
+// Nodes: 0 = Hospital (H), 1=A, 2=B, 3=C, 4=D, 5=E
+int dist[6][6] = {
+    {0,12,10,19,8,14},
+    {11,0,7,6,12,9},
+    {9,8,0,14,10,6},
+    {18,5,13,0,INF,11},
+    {7,11,9,15,0,8},
+    {13,10,6,12,9,0}
+};
+
+int dp[1<<5][6];
+int parent[1<<5][6]; // to reconstruct path
+
+int tsp(int mask, int u){
+
+    // All cities visited → return to hospital
+    if(mask == (1<<5)-1){
+        return (dist[u][0] == INF) ? INF : dist[u][0];
+    }
+
+    if(dp[mask][u] != -1){
+        return dp[mask][u];
+    }
+
+    int ans = INF;
+    int bestNext = -1;
+
+    for(int v = 1; v <= 5; v++){
+
+        int bit = v - 1;
+
+        // Already visited
+        if(mask & (1<<bit)) continue;
+
+        // 🔴 Constraint: B must be visited before C
+        // B = node 2 → bit = 1
+        // C = node 3 → bit = 2
+        if(v == 3 && !(mask & (1<<(2-1)))) continue;
+
+        // Blocked path
+        if(dist[u][v] == INF) continue;
+
+        int newCost = dist[u][v] + tsp(mask | (1<<bit), v);
+
+        if(newCost < ans){
+            ans = newCost;
+            bestNext = v;
+        }
+    }
+
+    parent[mask][u] = bestNext;
+    return dp[mask][u] = ans;
+}
+
+int main(){
+
+    memset(dp, -1, sizeof(dp));
+    memset(parent, -1, sizeof(parent));
+
+    int minCost = tsp(0, 0);
+
+    cout << "Minimum Cost: " << minCost << endl;
+
+    // 🔹 Reconstruct path
+    vector<int> path;
+    int mask = 0, u = 0;
+
+    path.push_back(0);
+
+    while(true){
+        int next = parent[mask][u];
+        if(next == -1) break;
+
+        path.push_back(next);
+        mask |= (1 << (next-1));
+        u = next;
+    }
+
+    path.push_back(0); // return to hospital
+
+    cout << "Path: ";
+    for(int node : path){
+        if(node == 0) cout << "H ";
+        else cout << char('A' + node - 1) << " ";
+    }
+
+    return 0;
+}
+
+#7
+import statistics
+
+"""
+Program to calculate:
+Mean, Median, Mode, Variance, Standard Deviation
+"""
+
+# Sample dataset
+data = [10, 20, 20, 30, 40, 50, 60]
+
+print("Dataset:", data)
+
+# Mean (Average)
+mean_value = statistics.mean(data)
+print("\nMean:", mean_value)
+
+# Median (Middle value)
+median_value = statistics.median(data)
+print("Median:", median_value)
+
+# Mode (Most frequent value)
+mode_value = statistics.mode(data)
+print("Mode:", mode_value)
+
+# Variance (Spread of data)
+variance_value = statistics.variance(data)
+print("Variance:", variance_value)
+
+# Standard Deviation (Square root of variance)
+std_dev = statistics.stdev(data)
+print("Standard Deviation:", std_dev)
+
+
+
+# # -----------------------------------------------
+# # Program to calculate Mean, Median, Mode,
+# # Variance, and Standard Deviation manually
+# # -----------------------------------------------
+
+# # Sample dataset
+# data = [10, 20, 20, 30, 40, 50, 60]
+
+# print("Dataset:", data)
+
+# n = len(data)
+
+# # ---------------- MEAN ----------------
+# total = 0
+# for num in data:
+#     total += num
+
+# mean = total / n
+# print("\nMean:", mean)
+
+# # ---------------- MEDIAN ----------------
+# sorted_data = sorted(data)
+
+# if n % 2 == 1:
+#     median = sorted_data[n // 2]
+# else:
+#     median = (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+
+# print("Median:", median)
+
+# # ---------------- MODE ----------------
+# freq = {}
+
+# for num in data:
+#     if num in freq:
+#         freq[num] += 1
+#     else:
+#         freq[num] = 1
+
+# mode = None
+# max_count = 0
+
+# for key in freq:
+#     if freq[key] > max_count:
+#         max_count = freq[key]
+#         mode = key
+
+# print("Mode:", mode)
+
+# # ---------------- VARIANCE ----------------
+# sum_sq_diff = 0
+
+# for num in data:
+#     sum_sq_diff += (num - mean) ** 2
+
+# variance = sum_sq_diff / (n - 1)   # sample variance
+# print("Variance:", variance)
+
+# # ---------------- STANDARD DEVIATION ----------------
+# std_dev = variance ** 0.5
+# print("Standard Deviation:", std_dev)
+
+#8
+import pandas as pd
+import numpy as np
+
+data1 = {
+    'ID' : [101,102,103,104],
+    'Name': ['Ankur', 'Aditya', 'Shubhrit', 'Dhairya'],
+    'Age': [22, 20, np.nan, 29],
+    'Score': [9000, np.nan, 7500, 8000]
+}
+
+data2 = {
+    'ID' : [101,102,103,104],
+    'Department' : ['IT', 'HR', 'Finance', 'Research']
+}
+
+frame1 = pd.DataFrame(data1)
+frame2 = pd.DataFrame(data2)
+print("Dataset: \n", frame1,'\n')
+print(frame2)
+
+# missing values
+frame1['Age'] = frame1['Age'].fillna(frame1['Age'].mean()).round(0)
+frame1['Score'] = frame1['Score'].fillna(frame1['Score'].mean()).round(0)
+print("\nMissing Values filled: ")
+print(frame1)
+
+# Data Filtering
+filtered = frame1[frame1['Score'] > 8100]
+print("\nScores > 8100 :\n",filtered)
+
+# Data Reshaping
+reshaped = pd.melt(frame1, id_vars=['ID','Name'],
+                   var_name='Attribute',
+                   value_name='Value')
+
+print("\nReshaped:\n", reshaped)
+
+# Merge data
+merged = pd.merge(frame1, frame2, on='ID', how='inner')
+print("\nMerged:\n", merged)
+
+#9
+#include <iostream>
+using namespace std;
+
+char board[3][3] = {
+    {'1','2','3'},
+    {'4','5','6'},
+    {'7','8','9'}
+};
+
+void printBoard()
+{
+    cout << "\n";
+    for(int i=0;i<3;i++)
+    {
+        for(int j=0;j<3;j++)
+        {
+            cout << " " << board[i][j] << " ";
+            if(j<2) cout << "|";
+        }
+        cout << "\n";
+        if(i<2) cout << "---+---+---\n";
+    }
+    cout << "\n";
+}
+
+bool checkWin()
+{
+    // rows & columns
+    for(int i=0;i<3;i++)
+    {
+        if(board[i][0]==board[i][1] && board[i][1]==board[i][2])
+            return true;
+        if(board[0][i]==board[1][i] && board[1][i]==board[2][i])
+            return true;
+    }
+
+    // diagonals
+    if(board[0][0]==board[1][1] && board[1][1]==board[2][2])
+        return true;
+
+    if(board[0][2]==board[1][1] && board[1][1]==board[2][0])
+        return true;
+
+    return false;
+}
+
+bool checkDraw()
+{
+    for(int i=0;i<3;i++)
+        for(int j=0;j<3;j++)
+            if(board[i][j] != 'X' && board[i][j] != 'O')
+                return false;
+    return true;
+}
+
+int main()
+{
+    int choice;
+    char player = 'X';
+
+    while(true)
+    {
+        printBoard();
+        cout << "Player " << player << " enter position (1-9): ";
+        cin >> choice;
+
+        int row = (choice-1)/3;
+        int col = (choice-1)%3;
+
+        if(board[row][col]=='X' || board[row][col]=='O')
+        {
+            cout << "Invalid move! Try again." << endl;
+            continue;
+        }
+
+        board[row][col] = player;
+
+        if(checkWin())
+        {
+            printBoard();
+            cout << "Player " << player << " wins!" << endl;
+            break;
+        }
+
+        if(checkDraw())
+        {
+            printBoard();
+            cout << "Match Draw! No winner." << endl;
+            break;
+        }
+
+        player = (player=='X') ? 'O' : 'X';
+    }
+
+    return 0;
+}
+
+#10
+#include <bits/stdc++.h>
+using namespace std;
+
+#define N 9
+
+// Print Sudoku board
+void printBoard(vector<vector<int>>& board) {
+    cout << "\nCurrent Sudoku Board:\n";
+    for (int i = 0; i < N; i++) {
+        if (i % 3 == 0 && i != 0)
+            cout << "---------------------\n";
+        for (int j = 0; j < N; j++) {
+            if (j % 3 == 0 && j != 0)
+                cout << "| ";
+            if (board[i][j] == 0)
+                cout << ". ";
+            else
+                cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Check if placing num is valid
+bool isSafe(vector<vector<int>>& board, int row, int col, int num) {
+    for (int x = 0; x < N; x++) {
+        if (board[row][x] == num || board[x][col] == num)
+            return false;
+    }
+
+    int startRow = row - row % 3;
+    int startCol = col - col % 3;
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (board[i + startRow][j + startCol] == num)
+                return false;
+
+    return true;
+}
+
+// Solve Sudoku using backtracking
+bool solveSudoku(vector<vector<int>>& board) {
+    for (int row = 0; row < N; row++) {
+        for (int col = 0; col < N; col++) {
+            if (board[row][col] == 0) {
+                for (int num = 1; num <= 9; num++) {
+                    if (isSafe(board, row, col, num)) {
+                        board[row][col] = num;
+
+                        if (solveSudoku(board))
+                            return true;
+
+                        board[row][col] = 0; // backtrack
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Check if board is full
+bool isComplete(vector<vector<int>>& board) {
+    for (auto& row : board)
+        for (auto& cell : row)
+            if (cell == 0)
+                return false;
+    return true;
+}
+
+int main() {
+    vector<vector<int>> board = {
+        {5,3,0, 0,7,0, 0,0,0},
+        {6,0,0, 1,9,5, 0,0,0},
+        {0,9,8, 0,0,0, 0,6,0},
+
+        {8,0,0, 0,6,0, 0,0,3},
+        {4,0,0, 8,0,3, 0,0,1},
+        {7,0,0, 0,2,0, 0,0,6},
+
+        {0,6,0, 0,0,0, 2,8,0},
+        {0,0,0, 4,1,9, 0,0,5},
+        {0,0,0, 0,8,0, 0,7,9}
+    };
+
+    int choice;
+
+    while (true) {
+        printBoard(board);
+
+        cout << "\nOptions:\n";
+        cout << "1. Enter a number\n";
+        cout << "2. Solve Sudoku\n";
+        cout << "3. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            int r, c, num;
+            cout << "Enter row (1-9), column (1-9), number (1-9): ";
+            cin >> r >> c >> num;
+
+            r--; c--;
+
+            if (r < 0 || r >= 9 || c < 0 || c >= 9 || num < 1 || num > 9) {
+                cout << "Invalid input!\n";
+                continue;
+            }
+
+            if (board[r][c] != 0) {
+                cout << "Cell already filled!\n";
+                continue;
+            }
+
+            if (isSafe(board, r, c, num)) {
+                board[r][c] = num;
+            } else {
+                cout << "Invalid move!\n";
+            }
+
+            if (isComplete(board)) {
+                cout << "\n🎉 Congratulations! Sudoku Completed!\n";
+                printBoard(board);
+                break;
+            }
+
+        } else if (choice == 2) {
+            if (solveSudoku(board)) {
+                cout << "\nSolved Sudoku:\n";
+                printBoard(board);
+            } else {
+                cout << "No solution exists!\n";
+            }
+            break;
+
+        } else if (choice == 3) {
+            break;
+
+        } else {
+            cout << "Invalid choice!\n";
+        }
+    }
+
+    return 0;
+}
+
+#11
+#include <bits/stdc++.h>
+using namespace std;
+
+class Puzzle {
+private:
+    vector<vector<int>> board;
+    int emptyRow, emptyCol;
+    int moves; // 🔹 move counter
+
+public:
+    Puzzle() {
+        board = {
+            {1, 2, 3},
+            {4, 0, 6},
+            {7, 5, 8}
+        };
+
+        moves = 0; // initialize moves
+
+        // find empty space
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                if (board[i][j] == 0) {
+                    emptyRow = i;
+                    emptyCol = j;
+                }
+    }
+
+    void printBoard() {
+        cout << "\n";
+        for (auto &row : board) {
+            for (auto &cell : row) {
+                if (cell == 0) cout << "_ ";
+                else cout << cell << " ";
+            }
+            cout << "\n";
+        }
+        cout << "\n";
+    }
+
+    bool isSolved() {
+        vector<vector<int>> goal = {
+            {1,2,3},
+            {4,5,6},
+            {7,8,0}
+        };
+        return board == goal;
+    }
+
+    bool moveUp() {
+        if (emptyRow == 0) return false;
+        swap(board[emptyRow][emptyCol], board[emptyRow - 1][emptyCol]);
+        emptyRow--;
+        return true;
+    }
+
+    bool moveDown() {
+        if (emptyRow == 2) return false;
+        swap(board[emptyRow][emptyCol], board[emptyRow + 1][emptyCol]);
+        emptyRow++;
+        return true;
+    }
+
+    bool moveLeft() {
+        if (emptyCol == 0) return false;
+        swap(board[emptyRow][emptyCol], board[emptyRow][emptyCol - 1]);
+        emptyCol--;
+        return true;
+    }
+
+    bool moveRight() {
+        if (emptyCol == 2) return false;
+        swap(board[emptyRow][emptyCol], board[emptyRow][emptyCol + 1]);
+        emptyCol++;
+        return true;
+    }
+
+    void play() {
+        char move;
+
+        while (true) {
+            printBoard();
+
+            if (isSolved()) {
+                cout << "🎉 Puzzle Solved!\n";
+                cout << "Total Moves Taken: " << moves << endl; // 🔹 print moves
+                break;
+            }
+
+            cout << "Move (W=Up, S=Down, A=Left, D=Right, Q=Quit): ";
+            cin >> move;
+
+            bool valid = true;
+
+            switch (toupper(move)) {
+                case 'W': valid = moveUp(); break;
+                case 'S': valid = moveDown(); break;
+                case 'A': valid = moveLeft(); break;
+                case 'D': valid = moveRight(); break;
+                case 'Q': return;
+                default:
+                    cout << "Invalid input!\n";
+                    continue;
+            }
+
+            if (!valid) {
+                cout << "❌ Invalid move!\n";
+            } else {
+                moves++; // 🔹 increment only if move is valid
+            }
+        }
+    }
+};
+
+int main() {
+    Puzzle game;
+    game.play();
+    return 0;
+}
